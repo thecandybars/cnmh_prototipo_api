@@ -14,26 +14,44 @@ const server = express();
 
 server.name = "API";
 
-//Get requests
+server.use((req, res, next) => {
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    "https://cnmh-prototipo.vercel.app"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, DELETE"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  next();
+});
 
 // CORS
-server.use(cors());
+const corsOptions = {
+  origin: ["https://cnmh-prototipo.vercel.app"],
+  credentials: true,
+};
+server.use(cors(corsOptions));
 
 // server.use(cookieParser());
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json({ limit: "100mb" }));
 
 //Handle requests
-server.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
-  next();
-});
+// server.use((req, res, next) => {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Credentials", "true");
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+//   );
+//   res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+//   next();
+// });
 
 // Static media routes
 server.use("/api/media", express.static("media"));
@@ -70,7 +88,11 @@ server.get("/video/*", (req, res) => {
       "Content-Length": chunkSize,
       "Content-Type": "video/mp4",
     };
-    res.writeHead(206, head);
+    res.writeHead(206, {
+      ...head,
+      "Access-Control-Allow-Origin": "https://cnmh-prototipo.vercel.app",
+    });
+
     file.pipe(res);
   } else {
     // Set the headers for the entire file
@@ -79,7 +101,11 @@ server.get("/video/*", (req, res) => {
       "Content-Type": "video/mp4",
     };
 
-    res.writeHead(200, head);
+    res.writeHead(200, {
+      ...head,
+      "Access-Control-Allow-Origin": "https://cnmh-prototipo.vercel.app",
+    });
+
     fs.createReadStream(videoPath).pipe(res); // Stream the entire file
   }
 });
