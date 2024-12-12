@@ -54,8 +54,8 @@ server.use(bodyParser.json({ limit: "100mb" }));
 // });
 
 // Static media routes
-server.use("/api/media", express.static("media"));
-server.use("/api/ipfs", express.static("ipfs"));
+server.use("/media", express.static("media"));
+server.use("/ipfs", express.static("ipfs"));
 
 // Streaming de video basado en carpetas
 server.get("/video/*", (req, res) => {
