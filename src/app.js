@@ -1,9 +1,7 @@
 require("dotenv").config();
 const express = require("express");
-// const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const routes = require("./routes/index.js");
-//const fileUpload = require('express-fileupload');
 const path = require("path");
 const fs = require("fs");
 const cors = require("cors");
@@ -11,14 +9,13 @@ const cors = require("cors");
 require("./db.js");
 
 const server = express();
+const client = "*";
+// const client = `${process.env.CLIENT_URL}`;
 
 server.name = "API";
 
 server.use((req, res, next) => {
-  res.setHeader(
-    "Access-Control-Allow-Origin",
-    "https://cnmh-prototipo.vercel.app"
-  );
+  res.setHeader("Access-Control-Allow-Origin", client);
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, OPTIONS, PUT, DELETE"
@@ -32,7 +29,7 @@ server.use((req, res, next) => {
 
 // CORS
 const corsOptions = {
-  origin: ["https://cnmh-prototipo.vercel.app"],
+  origin: [client],
   credentials: true,
 };
 server.use(cors(corsOptions));
@@ -64,7 +61,6 @@ server.get("/video/*", (req, res) => {
 
   // File exists?
   if (!fs.existsSync(videoPath)) {
-    console.log("🚀 ~ server.get ~ videoPath not found!!!:", videoPath);
     return res.status(404).send("Video not found!");
   }
 
@@ -90,7 +86,7 @@ server.get("/video/*", (req, res) => {
     };
     res.writeHead(206, {
       ...head,
-      "Access-Control-Allow-Origin": "https://cnmh-prototipo.vercel.app",
+      "Access-Control-Allow-Origin": client,
     });
 
     file.pipe(res);
@@ -103,7 +99,7 @@ server.get("/video/*", (req, res) => {
 
     res.writeHead(200, {
       ...head,
-      "Access-Control-Allow-Origin": "https://cnmh-prototipo.vercel.app",
+      "Access-Control-Allow-Origin": client,
     });
 
     fs.createReadStream(videoPath).pipe(res); // Stream the entire file
