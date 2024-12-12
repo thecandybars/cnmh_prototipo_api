@@ -6,6 +6,7 @@ const routes = require("./routes/index.js");
 //const fileUpload = require('express-fileupload');
 const path = require("path");
 const fs = require("fs");
+const cors = require("cors");
 
 require("./db.js");
 
@@ -14,6 +15,10 @@ const server = express();
 server.name = "API";
 
 //Get requests
+
+// CORS
+server.use(cors());
+
 // server.use(cookieParser());
 server.use(bodyParser.urlencoded({ extended: true }));
 server.use(bodyParser.json({ limit: "100mb" }));
